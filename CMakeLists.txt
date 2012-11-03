@@ -4,6 +4,15 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 PROJECT(Resectioning)
 
+if(UNIX)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
+endif(UNIX)
+
+# Eigen
+# Need to set EIGEN3_INCLUDE_DIR in this project CMake settings (or do the below:)
+include_directories(/media/portable/src/Eigen)
+
+# VTK
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
 
@@ -29,15 +38,29 @@ INCLUDE(${QT_USE_FILE})
 FIND_PACKAGE(ITK 4 REQUIRED)
 INCLUDE(${ITK_USE_FILE})
 
-# We do this in the CameraCalibration submodule, but it doesn't seem to work unless it is here as well ("cannot find -lvgl" type of errors)
-FIND_PACKAGE(VXL REQUIRED)
-INCLUDE(${VXL_CMAKE_DIR}/UseVXL.cmake)
-
 QT4_WRAP_UI(ResectioningUISrcs ResectioningWidget.ui)
 QT4_WRAP_CPP(ResectioningMOCSrcs ResectioningWidget.h)
 
 add_subdirectory(CameraCalibration)
 
+# Submodules
+# Only include PTXTools if it is not already available.
+get_property(FoundPTXTools GLOBAL PROPERTY PTXToolsIncludeDirs SET)
+if(NOT FoundPTXTools)
+  add_subdirectory(PTXTools)
+endif()
+
+get_property(PTXToolsIncludeDirs GLOBAL PROPERTY PTXToolsIncludeDirs)
+set(Resectioning_include_dirs ${Resectioning_include_dirs} ${PTXToolsIncludeDirs})
+get_property(PTXToolsLibs GLOBAL PROPERTY PTXToolsLibs)
+set(Resectioning_libraries ${Resectioning_libraries} ${PTXToolsLibs})
+
+
+# Give the compiler all required include directories
+include_directories(${Resectioning_include_dirs})
+
+
+# Create executable
 ADD_EXECUTABLE(ResectioningInteractive
 ResectioningInteractive.cpp
 ResectioningWidget.cpp
@@ -57,7 +80,7 @@ PointSelectionStyle2D.cpp
 PointSelectionStyle3D.cpp
 
 ${ResectioningUISrcs} ${ResectioningMOCSrcs} ${ResourceSrcs} )
-TARGET_LINK_LIBRARIES(ResectioningInteractive libCameraCalibration ${PTXTools_libraries})
+TARGET_LINK_LIBRARIES(ResectioningInteractive libCameraCalibration ${Resectioning_libraries})
 
 
 # SET(ResectionSmart ON CACHE BOOL "Append one ptx to the right of another")
