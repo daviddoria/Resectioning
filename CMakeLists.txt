@@ -9,8 +9,16 @@ if(UNIX)
 endif(UNIX)
 
 # Eigen
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
+if(NOT DEFINED EIGEN3_INCLUDE_DIR) # If the build is absolutely fresh, this will be the case if the CMake variable EIGEN3_INCLUDE_DIR is not set.
+  set(EIGEN3_INCLUDE_DIR $ENV{EIGEN3_INCLUDE_DIR})
+endif()
+
+FIND_PACKAGE(Eigen3 REQUIRED) #requires you to copy FindEigen3.cmake into the source directory
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 # Need to set EIGEN3_INCLUDE_DIR in this project CMake settings (or do the below:)
-include_directories(/media/portable/src/Eigen)
+#include_directories(/media/portable/src/Eigen)
 
 # VTK
 FIND_PACKAGE(VTK REQUIRED)
