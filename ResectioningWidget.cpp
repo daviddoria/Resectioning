@@ -530,10 +530,10 @@ void ResectioningWidget::on_action_Image_Open_activated()
 
   std::cout << "Got filename: " << fileName.toStdString() << std::endl;
   if(fileName.toStdString().empty())
-    {
+  {
     std::cout << "Filename was empty." << std::endl;
     return;
-    }
+  }
 
   LoadImage(fileName.toStdString());
 }
@@ -545,10 +545,10 @@ void ResectioningWidget::on_action_PointCloud_OpenVTP_activated()
 
   std::cout << "Got filename: " << fileName.toStdString() << std::endl;
   if(fileName.toStdString().empty())
-    {
+  {
     std::cout << "Filename was empty." << std::endl;
     return;
-    }
+  }
 
   LoadVTP(fileName.toStdString());
   std::cout << "Done loading point cloud." << std::endl;
@@ -557,14 +557,14 @@ void ResectioningWidget::on_action_PointCloud_OpenVTP_activated()
 void ResectioningWidget::on_action_PointCloud_OpenPTX_activated()
 {
   // Get a filename to open
-  QString fileName = QFileDialog::getOpenFileName(this, "Open Point Cloud", ".", "Files (*.vtp)");
+  QString fileName = QFileDialog::getOpenFileName(this, "Open Point Cloud", ".", "Files (*.ptx)");
 
   std::cout << "Got filename: " << fileName.toStdString() << std::endl;
   if(fileName.toStdString().empty())
-    {
+  {
     std::cout << "Filename was empty." << std::endl;
     return;
-    }
+  }
 
   LoadPTX(fileName.toStdString());
   std::cout << "Done loading point cloud." << std::endl;
